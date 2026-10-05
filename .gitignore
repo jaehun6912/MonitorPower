@@ -1,0 +1,8 @@
+# Build output: portable\ is where build.ps1 puts the program (and where you may keep your own ControlMyMonitor files).
+portable/
+artifacts/
+bin/
+obj/
+.vs/
+*.user
+*.suo

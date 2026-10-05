@@ -1,0 +1,20 @@
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Release</Configuration>
+    <OutputType>WinExe</OutputType>
+    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
+    <AssemblyName>MonitorPower</AssemblyName>
+    <RootNamespace>MonitorPower</RootNamespace><ApplicationIcon>MonitorPower.ico</ApplicationIcon>
+    <OutputPath>bin\$(Configuration)\</OutputPath>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" /><Reference Include="System.Core" />
+    <Reference Include="System.Drawing" /><Reference Include="System.Windows.Forms" />
+    <Compile Include="AssemblyInfo.cs" /><Compile Include="Program.cs" /><Compile Include="MonitorCore.cs" />
+    <Compile Include="Theme.cs" /><Compile Include="Controls.cs" /><Compile Include="MainForm.cs" /><Compile Include="Dialogs.cs" />
+    <None Include="App.config" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+</Project>
+
