@@ -38,6 +38,7 @@ ControlMyMonitor는 NirSoft의 프로그램이므로 설치파일에 포함되�
 ## 화면
 
 ![메인 창: 전원이 켜진 모니터](preview.png)
+
 이 캡처 화면은 실제 동작을 캡처한것임.
 
 화면 구성은 [RemoteAccessHub](https://github.com/jaehun6912/RemoteAccessHub)와 같습니다. 어두운 바탕에 초록 강조색을 쓰고, 위에서부터 머리글, 상태 카드, 안내 줄, 버튼 줄 순서로 놓입니다. 정보와 기록은 창 아래로 펼쳐집니다.
