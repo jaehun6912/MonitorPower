@@ -1,18 +1,38 @@
-# Monitor Power 2.0
+# Monitor Power
 
-모니터를 선택하고 전원 켜기·끄기와 상태 확인을 간편하게 실행하는 Windows 프로그램입니다.
+모니터의 전원 켜기·끄기와 상태 확인을 간편하게 실행하는 Windows 프로그램입니다.
+
+## 동작 원리
+
+이 프로그램은 **DDC/CI**(Display Data Channel / Command Interface)를 이용해 모니터를 제어합니다.
+
+모니터의 전원 버튼은 전기를 직접 끊는 스위치가 아니라, 대기전력으로 항상 동작하는 모니터 내부 제어 칩(스케일러)에 명령을 전달하는 입력 장치입니다. DDC/CI는 이 명령을 버튼 대신 **영상 케이블을 통해** 보낼 수 있게 해주는 VESA 표준입니다.
+
+- **통신 경로**: HDMI·DVI·VGA의 DDC 라인(I²C), DisplayPort의 AUX 채널
+- **명령 규격**: VESA MCCS(Monitor Control Command Set)의 VCP 코드
+
+| VCP 코드 | 기능 | 값 |
+|---|---|---|
+| `0xD6` | 전원 모드 | `01` 켜기 · `04` 대기 · `05` 끄기 |
+VCP 코드와 값은 모니터별로 상이할 수 있음.
+
+### 제약 사항
+
+- 독(dock), KVM 스위치, 일부 변환 어댑터를 거치면 명령이 전달되지 않을 수 있습니다.
+- `05`(끄기) 이후에는 모델에 따라 DDC 수신이 중단되어 **프로그램으로 다시 켜지지 않을 수 있습니다.** 이 경우 `04`(대기) 사용을 권장합니다.
+- 물리적 전원 스위치나 전원 차단은 제어할 수 없습니다.
 
 ## 설치
 
 [릴리스](https://github.com/jaehun6912/MonitorPower/releases)에서 둘 중 하나를 받습니다.
 
 - **설치 파일** `MonitorPower-setup-<버전>.exe`: 관리자 권한 없이 사용자 폴더(`%LOCALAPPDATA%\Programs\MonitorPower`)에 설치하고, 시작 메뉴 바로 가기와 제거 항목을 만듭니다. 설치 중에 이미 받아 둔 `ControlMyMonitor.exe`를 고르면 설치 폴더로 복사합니다. 제거할 때 설정 파일을 지울지 묻습니다.
-- **휴대용 ZIP** `MonitorPower-<버전>-portable.zip`: 원하는 폴더에 풀고, `ControlMyMonitor.exe`를 `MonitorPower.exe`와 같은 폴더에 넣은 뒤 실행합니다.
+- **포터블 ZIP** `MonitorPower-<버전>-portable.zip`: 원하는 폴더에 풀고, `ControlMyMonitor.exe`를 `MonitorPower.exe`와 같은 폴더에 넣은 뒤 실행합니다.
 
-ControlMyMonitor는 NirSoft의 프로그램이라 배포본에 포함하지 않습니다. https://www.nirsoft.net/utils/control_my_monitor.html 에서 받으세요.
-Windows 10/11과 .NET Framework 4.8(Windows 10 1903 이후와 Windows 11에 기본 포함)이 필요합니다. 별도 런타임 설치 없이 실행합니다.
+ControlMyMonitor는 NirSoft의 프로그램이므로 설치파일에 포함되지 않습니다. https://www.nirsoft.net/utils/control_my_monitor.html 에서 직접 다운받은 후, Monitor Power의 설치 폴더에 넣으세요.
+.NET Framework 4.8(Windows 10 1903 이후와 Windows 11에 기본 포함)이 필요합니다.
 
-> **서명되지 않은 실행 파일입니다(설치 파일도 마찬가지).** Windows SmartScreen이나 백신이 실행을 막거나 경고할 수 있습니다.
+> **서명되지 않은 실행 파일입니다.** Windows SmartScreen이나 백신이 악성코드로 분류할 가능성 있습니다.
 
 ## 화면
 
@@ -43,9 +63,7 @@ Windows 10/11과 .NET Framework 4.8(Windows 10 1903 이후와 Windows 11에 기�
 
 ## 연결 안내
 
-전원을 끈 뒤 DDC/CI 연결이 끊기면 켜기 명령이 Error 31로 실패할 수 있습니다. 이 경우 모니터의 물리 전원 버튼으로 켜 주세요.
-
-사용자의 LG 환경에서는 Chrome 원격 데스크톱에서 전원 제어가 정상 동작했습니다. Windows 원격 데스크톱(RDP) 또는 Remote_Monitor가 감지되면 제어 버튼을 비활성화합니다. Chrome 원격 데스크톱 접속 여부는 자동 판별하지 않습니다.
+사용자의 LG 환경에서는 Windows 원격 데스크톱(RDP)가 아닌 환경에서 전원 제어가 정상 동작했습니다. Windows 원격 데스크톱(RDP) 또는 가상 모니터가 감지되면 전원 켜기 끄기가 불가하며, 제어 버튼을 비활성화합니다.
 
 마지막으로 선택한 모니터와 설정(테마, 자동 새로고침, 켜기 시도 횟수, 펼친 패널, 알림 영역 실행)을 `%APPDATA%\MonitorPower\settings.ini`에 저장합니다. 전원을 끈 뒤 모니터가 목록에서 사라져도, 실행 중은 물론 프로그램을 다시 실행한 뒤에도 그 모니터를 ‘연결 확인 필요’로 표시하고 켜기를 시도할 수 있습니다. 목록에 없는 모니터는 자동 상태 조회를 하지 않습니다. 케이블이나 디스플레이 구성을 바꾼 경우 새로고침 후 대상을 확인해 주세요. 설정 파일을 지우면 초기 상태로 돌아갑니다.
 
@@ -93,7 +111,7 @@ src/
 
 ## 버전 2.0
 
-- **화면 전면 개편**: RemoteAccessHub와 같은 디자인(어두운·밝은 테마, 머리글 상태 배지, 상태 카드, 안내 줄, 평면 버튼, 아래로 펼치는 정보·기록, 설정 창). 전원 명령과 상태 판정 규칙은 그대로입니다.
+- **UI 개선**: [RemoteAccessHub](https://github.com/jaehun6912/RemoteAccessHub)와 같은 디자인.
 - **전원 켜기 재시도**: 켜짐이 확인될 때까지 0.3초마다 상태를 확인하며 다시 보냅니다. 최대 횟수 설정, 취소(Esc).
 - **상태 자동 새로고침**: 1~3600초 간격, 상태가 바뀔 때만 기록.
 - **설치 파일**: 관리자 권한 없이 설치, ControlMyMonitor 위치 선택, 제거 시 설정 삭제 여부 확인.
